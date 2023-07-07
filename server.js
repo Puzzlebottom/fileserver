@@ -1,4 +1,5 @@
 const net = require("net");
+const fs = require("fs").promises;
 
 const server = net.createServer();
 
@@ -8,11 +9,20 @@ server.listen(3000, () => {
 
 server.on("connection", (client) => {
   console.log("New client connected");
-  client.write("G'day");
+  client.write("---connected---");
 
-  client.setEncoding("utf8"); // interpret data as text
+  client.setEncoding("utf8");
 
   client.on("data", (data) => {
-    console.log("Message from client: ", data);
+    console.log(data);
   });
 });
+
+
+//server functions :
+// => show files
+// => CREATE file from data
+// => READ file by name
+// => UPDATE file (add data)
+// => DELETE file by name
+
