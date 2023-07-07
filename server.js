@@ -1,6 +1,5 @@
+const { parseInstruction } = require("./file-controller");
 const net = require("net");
-const fs = require("fs").promises;
-
 const server = net.createServer();
 
 server.listen(3000, () => {
@@ -14,15 +13,14 @@ server.on("connection", (client) => {
   client.setEncoding("utf8");
 
   client.on("data", (data) => {
-    console.log(data);
+    parseInstruction(data);
   });
 });
 
 
 //server functions :
-// => show files
-// => CREATE file from data
-// => READ file by name
-// => UPDATE file (add data)
-// => DELETE file by name
+// => list all files            list
+// => CREATE file from data     save file.txt as file2.txt
+// => READ file by name         load file.txt
+// => DELETE file by name       delete file.txt
 
