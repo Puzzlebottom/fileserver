@@ -1,8 +1,6 @@
 const readline = require('readline');
-const { writeFile, readFile } = require('fs').promises;
 
 let connection;
-
 const setupInput = (conn) => {
   connection = conn;
 
@@ -14,14 +12,37 @@ const setupInput = (conn) => {
   const stdin = rl.input;
   stdin.setRawMode(true);
   stdin.setEncoding('utf8');
+
   rl.on('line', (line) => inputHandler(line));
+
   stdin.resume();
 
   return stdin;
 };
 
 const inputHandler = (line) => {
-  connection.write(line);
+
+  const validCommands = ['load', 'save'];
+
+  let [command, path, data] = [...line.split(' ')];
+  let fileName;
+
+  if (!validCommands.includes(command)) {
+    return console.log(`Cient Error: unknown command: ${command}`);
+  }
+
+  if (path) {
+    path = path.split('/');
+    [fileName] = [...path.slice(-1)];
+    path.pop();
+    path = `${[path.join('/')]}/`;
+  }
+
+  if (path === '/') path = '';
+
+  const request = { command, path, fileName, data };
+
+  connection.write(JSON.stringify(request));
 };
 
 module.exports = { setupInput };
