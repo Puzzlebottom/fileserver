@@ -1,12 +1,13 @@
 const readline = require('readline');
 
 let connection;
+
 const setupInput = (conn) => {
   connection = conn;
 
   const rl = readline.createInterface({
-    'input': process.stdin,
-    'output': process.stdout
+    input: process.stdin,
+    output: process.stdout
   });
 
   const stdin = rl.input;
@@ -20,6 +21,8 @@ const setupInput = (conn) => {
   return stdin;
 };
 
+// const closeInput = () => readline.close();
+
 const inputHandler = (line) => {
 
   const validCommands = ['load', 'save'];
@@ -28,7 +31,7 @@ const inputHandler = (line) => {
   let fileName;
 
   if (!validCommands.includes(command)) {
-    return console.log(`Cient Error: unknown command: ${command}`);
+    return console.log(`Client Error: unknown command: ${command}`); // => this whole thing is inelegant
   }
 
   if (path) {

@@ -1,29 +1,32 @@
-const net = require('net');
-const { saveFile } = require('./file-controller');
 const { HOST, PORT } = require('./constants');
+const { closeInput } = require('./input');
+const net = require('net');
+const { handleData, handleError, handleMessage } = require('./responseHandler');
+
 
 const connect = () => {
   const conn = net.createConnection({
-    'host': HOST,
-    'port': PORT
+    host: HOST,
+    port: PORT
   });
 
   conn.setEncoding('utf8');
 
   conn.on('data', (data) => {
     const parsed = JSON.parse(data);
-    if (parsed.type === 'data') {
-      const path = `./client-data/${parsed.payload.fileName}`;
-      console.log(parsed);
-      const buffer = Buffer.from(parsed.payload.file.data, 'utf-8');
-      return saveFile(path, buffer)
-        .then(() => console.log(`${path} successfully received`))
-        .catch((err) => console.log(`${err.message}`));
-    }
-    return console.log(parsed.payload);
-  });
-  conn.on('end', () => console.log('---disconnected---'));
+    const { type, payload } = parsed;
 
+    if (type === 'data') return handleData(payload);
+    if (type === 'message') return handleMessage(payload);
+    if (type === 'error') return handleError(payload);
+
+    console.log(`Unknown server response type: ${data}`);
+  });
+
+  conn.on('end', () => {
+    console.log('---disconnected---');
+    // closeInput();
+  });
   return conn;
 };
 

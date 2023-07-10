@@ -1,26 +1,34 @@
 const { loadFile, saveFile } = require('./file-controller');
 
-const parseRequest = (instruction) => {
-  const { command, path, fileName, data } = JSON.parse(instruction);
+const parseRequest = (request) => {
+  const { command, path, fileName, data } = JSON.parse(request);
 
   return new Promise((resolve, reject) => {
 
     if (command === 'load') {
       return loadFile(`./server-data/${path}${fileName}`)
         .then((file) => {
-          resolve({ fileName, file });
+          resolve(formatResponse('data', { fileName, file }));
         })
-        .catch((err) => `${err.message}`);
+        .catch((error) => {
+          reject(formatResponse('error', { error }));
+        });
     }
 
     if (command === 'save') {
-      resolve(saveFile(`./server-data/${path}${fileName}`, data)
-        .then(() => `${fileName} successfully saved`)
-        .catch((err) => `${err.message}`));
+      return saveFile(`./server-data/${path}${fileName}`, data)
+        .then(() => {
+          resolve(formatResponse('message', { message: `${fileName} successfully saved` }));
+        })
+        .catch((error) => {
+          reject(formatResponse('error', { error }));
+        });
     }
-
-    reject(new Error(`Server Error: unknown command: ${command}`));
+    reject(formatResponse('error', { error: `Server Error: unknown command: ${command}` }));
   });
 };
 
-module.exports = { parseRequest };
+const formatResponse = (type, payload) => JSON.stringify({ type, payload });
+
+
+module.exports = { formatResponse, parseRequest };
