@@ -5,7 +5,7 @@ const loadFile = (path) => {
 };
 
 const saveFile = (path, data) => {
-  return writeFile(`${path}`, data, { 'flag': 'wx' });
+  return writeFile(`${path}`, data, { flag: 'wx' });
 };
 
 module.exports = { loadFile, saveFile };
