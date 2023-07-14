@@ -25,13 +25,13 @@ const setupInput = (conn) => {
 
 const inputHandler = (line) => {
 
-  const validCommands = ['load', 'save'];
+  const validCommands = ['delete', 'list', 'load', 'save'];
 
   let [command, path, data] = [...line.split(' ')];
   let fileName;
 
   if (!validCommands.includes(command)) {
-    return console.log(`Client Error: unknown command: ${command}`); // => this whole thing is inelegant
+    return console.log(`Client Error: unknown command: ${command}`);
   }
 
   if (path) {
@@ -43,7 +43,13 @@ const inputHandler = (line) => {
 
   if (path === '/') path = '';
 
-  const request = { command, path, fileName, data };
+  const request = {};
+
+  if (command) request['command'] = command;
+  if (path) request['path'] = path;
+  if (fileName) request['fileName'] = fileName;
+  if (data) request['data'] = data;
+  console.log('REQUEST: ', request);
 
   connection.write(JSON.stringify(request));
 };
