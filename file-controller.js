@@ -1,19 +1,19 @@
 const { writeFile, readdir, readFile, unlink } = require('fs').promises;
 
-const loadFile = (path) => {
-  return readFile(`${path}`);
+const loadFile = (filePath) => {
+  return readFile(`${filePath}`);
 };
 
-const saveFile = (path, data) => {
-  return writeFile(`${path}`, data, { flag: 'wx' });
+const saveFile = (filePath, data) => {
+  return writeFile(`${filePath}`, data, { flag: 'wx' });
 };
 
-const listFiles = (path) => {
-  return readdir(path);
+const listFiles = (filePath) => {
+  return readdir(filePath);
 };
 
-const deleteFile = (path) => {
-  return unlink(path);
+const deleteFile = (filePath) => {
+  return unlink(filePath);
 };
 
 module.exports = { deleteFile, listFiles, loadFile, saveFile };

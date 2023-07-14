@@ -1,5 +1,3 @@
-Sort out input parsing
-
 #### GETTING STARTED:
 ```node server.js``` :  runs server<br/>
 ```node connect.js``` : connect from client

@@ -1,5 +1,4 @@
 const { HOST, PORT } = require('./constants');
-const { closeInput } = require('./input');
 const net = require('net');
 const { handleData, handleError, handleMessage } = require('./responseHandler');
 
@@ -20,12 +19,11 @@ const connect = () => {
     if (type === 'message') return handleMessage(payload);
     if (type === 'error') return handleError(payload);
 
-    console.log(`Unknown server response type: ${data}`);
+    console.log(`Unknown server response type: ${data}\n`);
   });
 
   conn.on('end', () => {
-    console.log('---disconnected---');
-    // closeInput();
+    console.log('---disconnected---\n');
   });
   return conn;
 };

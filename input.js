@@ -1,4 +1,5 @@
 const readline = require('readline');
+const { loadFile } = require('./file-controller');
 
 let connection;
 
@@ -21,37 +22,27 @@ const setupInput = (conn) => {
   return stdin;
 };
 
-// const closeInput = () => readline.close();
-
 const inputHandler = (line) => {
 
-  const validCommands = ['delete', 'list', 'load', 'save'];
+  const VALID_COMMANDS = ['delete', 'list', 'load', 'save'];
 
-  let [command, path, data] = [...line.split(' ')];
-  let fileName;
+  const [command, fileName] = [...line.split(' ')];
 
-  if (!validCommands.includes(command)) {
-    return console.log(`Client Error: unknown command: ${command}`);
+  if (!VALID_COMMANDS.includes(command)) {
+    return console.log(`Client Error: unknown command: ${command}\n`);
   }
 
-  if (path) {
-    path = path.split('/');
-    [fileName] = [...path.slice(-1)];
-    path.pop();
-    path = `${[path.join('/')]}/`;
+  if (command === 'save') {
+    loadFile(`./client-data/${fileName}`)
+      .then((data) => {
+        const request = { command, fileName, data };
+        connection.write(JSON.stringify(request));
+      })
+      .catch((error) => console.log(error));
+  } else {
+    const request = { command, fileName };
+    connection.write(JSON.stringify(request));
   }
-
-  if (path === '/') path = '';
-
-  const request = {};
-
-  if (command) request['command'] = command;
-  if (path) request['path'] = path;
-  if (fileName) request['fileName'] = fileName;
-  if (data) request['data'] = data;
-  console.log('REQUEST: ', request);
-
-  connection.write(JSON.stringify(request));
 };
 
 module.exports = { setupInput };

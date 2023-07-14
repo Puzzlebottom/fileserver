@@ -1,11 +1,11 @@
 const { saveFile } = require('./file-controller');
 
 const handleData = (payload) => {
-  const { fileName, file } = payload;
-  const path = `./client-data/${fileName}`;
-  const buffer = Buffer.from(file.data, 'utf-8');
-  saveFile(path, buffer)
-    .then(() => console.log(`${path} successfully received`))
+  let { fileName, data } = payload;
+  const filePath = `./client-data/${fileName}`;
+  const buffer = Buffer.from(data, 'utf-8');
+  saveFile(filePath, buffer)
+    .then(() => console.log(`${fileName} successfully received\n`))
     .catch((err) => console.log(`${err.message}`));
 };
 

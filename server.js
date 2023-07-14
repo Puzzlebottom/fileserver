@@ -9,7 +9,7 @@ server.listen(3000, () => {
 
 server.on('connection', (client) => {
   client.setEncoding('utf8');
-  client.write(formatResponse('message', { message: '---connected---' }));
+  client.write(formatResponse('message', { message: '---connected---\n' }));
   console.log('New client connected');
 
   client.on('data', (data) => {

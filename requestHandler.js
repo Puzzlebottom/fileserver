@@ -1,26 +1,29 @@
 const { deleteFile, listFiles, loadFile, saveFile } = require('./file-controller');
 
 const parseRequest = (request) => {
-  let { command, path, fileName, data } = JSON.parse(request);
+  let { command, fileName, data } = JSON.parse(request);
 
   return new Promise((resolve, reject) => {
 
     if (command === 'load') {
-      return loadFile(`./server-data/${path}${fileName}`)
-        .then((file) => resolve(formatResponse('data', { fileName, file })))
+      return loadFile(`./server-data/${fileName}`)
+        .then((data) => {
+          resolve(formatResponse('data', { fileName, data }));
+        })
         .catch((error) => reject(formatResponse('error', { error })));
     }
 
     if (command === 'save') {
-      return saveFile(`./server-data/${path}${fileName}`, data)
-        .then(() => resolve(formatResponse('message', { message: `${fileName} successfully saved` })))
+      const buffer = Buffer.from(data, 'utf-8');
+      return saveFile(`./server-data/${fileName}`, buffer)
+        .then(() => resolve(formatResponse('message', { message: `${fileName} successfully saved\n` })))
         .catch((error) => reject(formatResponse('error', { error })));
     }
 
     if (command === 'list') {
-      return listFiles(`./server-data/${path}`)
+      return listFiles('./server-data')
         .then((files) => {
-          let message = `\nListing ${path}directory contents...\n`;
+          let message = '\nListing server contents...\n';
           for (const file of files) {
             message += `${file}\n`;
           }
@@ -30,14 +33,14 @@ const parseRequest = (request) => {
     }
 
     if (command === 'delete') {
-      return deleteFile(`./server-data/${path}${fileName}`)
+      return deleteFile(`./server-data/${fileName}`)
         .then(() => {
-          resolve(formatResponse('message', { message: `${fileName} successfully removed` }));
+          resolve(formatResponse('message', { message: `${fileName} successfully removed\n` }));
         })
         .catch((error) => reject(formatResponse('error', { error })));
     }
 
-    reject(formatResponse('error', { error: `Server Error: unknown command: ${command}` }));
+    reject(formatResponse('error', { error: `Server Error: unknown command: ${command}\n` }));
   });
 };
 
